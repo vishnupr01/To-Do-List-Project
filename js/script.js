@@ -33,10 +33,13 @@ document.getElementById("taskForm").addEventListener("submit", function (e) {
 // Function to format time to 12-hour format
 function formatTime(time) {
   const [hours, minutes] = time.split(":");
-  const date = new Date(0, 0, 0, hours, minutes);
-  const hours12 = date.getHours() % 12 || 12;
+  let date = new Date(0, 0, 0, hours, minutes);
+  // Ensure hours are in 12-hour format, but with padding if necessary
+  const hours12 = (date.getHours() % 12 || 12).toString().padStart(2, "0");
   const am_pm = date.getHours() >= 12 ? "PM" : "AM";
-  return `${hours12}:${String(date.getMinutes()).padStart(2, "0")} ${am_pm}`;
+  // Ensure minutes are always two digits
+  const formattedMinutes = String(date.getMinutes()).padStart(2, "0");
+  return `${hours12}:${formattedMinutes} ${am_pm}`;
 }
 //Function to format  date into readable format
 function formatDate(date) {
