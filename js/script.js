@@ -9,9 +9,12 @@ document.getElementById("taskForm").addEventListener("submit", function (e) {
 
   if (taskName && taskDate && taskTime) {
     const formattedTime = formatTime(taskTime);
+    const formattedDate = formatDate(taskDate)
+    console.log(formattedDate);
+
     const task = {
       name: taskName,
-      date: taskDate,
+      date: formattedDate,
       time: formattedTime
     };
 
@@ -35,6 +38,12 @@ function formatTime(time) {
   const am_pm = date.getHours() >= 12 ? "PM" : "AM";
   return `${hours12}:${String(date.getMinutes()).padStart(2, "0")} ${am_pm}`;
 }
+//Function to format  date into readable format
+function formatDate(date) {
+  const [year, month, day] = date.split("-");
+  return `${day}/${month}/${year}`;
+}
+
 
 // Function to display tasks
 function displayTasks() {
@@ -46,8 +55,8 @@ function displayTasks() {
     const taskItem = document.createElement("div");
     taskItem.className = "p-2 mb-2  rounded-md  bg-gray-50";
     taskItem.innerHTML = `
-      <div class="text-lg font-semibold">${task.name}</div>
-      <div class="text-sm text-gray-600">${task.date} - ${task.time}</div>
+      <div class="text-lg font-semibold">${task.date}</div>
+      <div class="text-sm text-gray-600"> ${task.name} at <span class="font-bold text-black">${task.time}</span></div>
     `;
     taskList.appendChild(taskItem);
   });
