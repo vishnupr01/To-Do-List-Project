@@ -35,7 +35,7 @@ function formatTime(time) {
   const [hours, minutes] = time.split(":");
   let date = new Date(0, 0, 0, hours, minutes);
   const hours12 = (date.getHours() % 12 || 12).toString().padStart(2, "0");
-  const am_pm = date.getHours() >= 12 ? "PM" : "AM";
+  const am_pm = date.getHours() >= 12 ? "am" : "pm";
   const formattedMinutes = String(date.getMinutes()).padStart(2, "0");
   return `${hours12}:${formattedMinutes} ${am_pm}`;
 }
@@ -76,6 +76,12 @@ function displayTasks() {
   const taskList = document.getElementById("taskList");
   taskList.innerHTML = ""; // Clear current tasks
 
+
+    // Display Due tasks
+    if (dueTasks.length > 0) {
+      const dueSection = createTaskSection("Due Tasks", dueTasks);
+      taskList.appendChild(dueSection);
+    }
   // Display Today tasks
   if (todayTasks.length > 0) {
     const todaySection = createTaskSection("Today", todayTasks, true); // Pass true to indicate no date for today
@@ -88,11 +94,7 @@ function displayTasks() {
     taskList.appendChild(upcomingSection);
   }
 
-  // Display Due tasks
-  if (dueTasks.length > 0) {
-    const dueSection = createTaskSection("Due", dueTasks);
-    taskList.appendChild(dueSection);
-  }
+
 }
 
 // Function to create the HTML for a task section
@@ -113,10 +115,10 @@ function createTaskSection(title, tasks, isToday = false) {
     taskItem.className = "p-4 mb-4 rounded-md bg-gray-50 shadow-sm";  // Add shadow for visual separation
 
     taskItem.innerHTML = `
-      <div class="flex  mb-2">
-        ${!isToday ? `<div class="text-lg font-semibold  text-gray-600">${task.date}</div>` : ''}
+      <div class="flex flex-col mb-2">
+        ${!isToday ? `<div class="text-lg text-black font-semibold  ">${task.date}</div>` : ''}
         <div class="items-center">
-          <div class="text-lg ml-2 font-semibold">${task.name} <span class="text-sm text-gray-500">at ${task.time}</span></div>
+          <div class="text-sm  mt-2 ">${task.name} at<span class="text-sm font-bold text-black"> ${task.time}</span></div>
         </div>
       </div>
     `;
