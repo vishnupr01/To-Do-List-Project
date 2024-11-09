@@ -106,19 +106,19 @@ function displayTasks() {
   }
 
   if (editingTask && tasks.some(task => task.id === editingTask)) {
-      const editDiv = document.createElement('div');
-      const taskToEdit = tasks.find(task => task.id === editingTask);
-      editDiv.innerHTML = `
+    const editDiv = document.createElement('div');
+    const taskToEdit = tasks.find(task => task.id === editingTask);
+    editDiv.innerHTML = `
         <div class="p-4 mt-4 bg-gray-100 rounded-md shadow-sm">
           <h3 class="text-xl font-bold">Edit Task</h3>
           <input type="text" id="editTaskInput" value="${taskToEdit.name}" class="border p-2 rounded-md w-full mb-2"/>
           <button onclick="saveTask('${taskToEdit.id}')" class="bg-green-500 py-1 px-3 rounded-md">Save</button>
-          <button onclick="cancelEdit()" class="ml-2 bg-gray-500 py-1 px-3 rounded-md">Cancel</button>
+          <button onclick="cancelEdit()" class="ml-2 bg-black text-white py-1 px-3 rounded-md">Cancel</button>
         </div>
       `;
-      taskList.appendChild(editDiv);
-    }
-  
+    taskList.appendChild(editDiv);
+  }
+
 
 
 }
@@ -166,6 +166,24 @@ function showEditTask(taskId) {
   console.log("tasKid in function:", typeof taskId)
   editingTask = String(taskId);
   displayTasks(); // Rerender tasks with edit field for the selected task
+}
+function cancelEdit() {
+  editingTask = null
+  displayTasks()
+}
+function saveTask(taskId) {
+  const taskName = document.getElementById("editTaskInput").value
+  if (taskName) {
+    const tasks = JSON.parse(localStorage.getItem("tasks")) || []
+    const task = tasks.find(t => t.id === taskId)
+    if (task) {
+      task.name = taskName
+      localStorage.setItem("tasks", JSON.stringify(tasks))
+      editingTask = null
+      displayTasks()
+    }
+  }
+
 }
 
 // Display tasks on page load
