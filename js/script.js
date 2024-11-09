@@ -148,7 +148,7 @@ function createTaskSection(title, tasks, isToday = false) {
   
         <div class="flex">
           <button onclick="showEditTask('${task.id}')" class="bg-yellow-500 py-1 px-3 rounded-md">Edit</button>
-          <button class="ml-2 bg-red-500 py-1 px-2 rounded-md">Delete</button>
+          <button onclick="deleteTask('${task.id}')" class="ml-2 bg-red-500 py-1 px-2 rounded-md">Delete</button>
         </div>
       </div>
     </div>
@@ -184,6 +184,12 @@ function saveTask(taskId) {
     }
   }
 
+}
+function deleteTask(taskId) {
+  const tasks = JSON.parse(localStorage.getItem("tasks")) || []
+  const updatedTasks = tasks.filter(task => task.id !== taskId)
+  localStorage.setItem("tasks", JSON.stringify(updatedTasks))
+  displayTasks()
 }
 
 // Display tasks on page load
