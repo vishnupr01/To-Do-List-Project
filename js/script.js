@@ -178,7 +178,6 @@ function createTaskSection(title, tasks, isToday = false) {
   `;
 
     taskItemsContainer.appendChild(taskItem);
-    console.log("edit task,:", typeof editingTask, "taskId:", typeof task.id)
 
   });
 
