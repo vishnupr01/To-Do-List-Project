@@ -1,7 +1,11 @@
 let searchTerm = ""
+let debounceTimeout;
 document.getElementById("searchInput").addEventListener("input", function (e) {
-  searchTerm = e.target.value.toLowerCase(); // Update search term with lowercase input
-  displayTasks(); // Call displayTasks to re-render filtered tasks
+  searchTerm = e.target.value.toLowerCase();
+  clearTimeout(debounceTimeout)
+  debounceTimeout = setTimeout(() => {
+    displayTasks(); // Call displayTasks to re-render filtered tasks
+  }, 300)
 });
 document.getElementById("okButton").addEventListener("click", function () {
   document.getElementById("modal").classList.add("hidden");
