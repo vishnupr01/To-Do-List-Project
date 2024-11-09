@@ -1,3 +1,10 @@
+let searchTerm=""
+document.getElementById("searchInput").addEventListener("input", function (e) {
+  searchTerm = e.target.value.toLowerCase(); // Update search term with lowercase input
+  displayTasks(); // Call displayTasks to re-render filtered tasks
+});
+
+
 document.getElementById("taskForm").addEventListener("submit", function (e) {
   e.preventDefault(); // Prevent form submission
 
@@ -72,15 +79,18 @@ function displayTasks() {
 
   // Group tasks by their dates
   tasks.forEach((task) => {
-    const taskDate = new Date(task.rawDate);
-    const taskFormattedDate = formatDate(task.rawDate);
+    if (task.name.toLowerCase().includes(searchTerm)) {
+      const taskDate = new Date(task.rawDate);
+      const taskFormattedDate = formatDate(task.rawDate);
 
-    if (taskFormattedDate === todayDate) {
-      todayTasks.push(task);
-    } else if (taskDate > currentDate) {
-      upcomingTasks.push(task);
-    } else {
-      dueTasks.push(task);
+      // Group the task based on its date (today, upcoming, or due)
+      if (taskFormattedDate === todayDate) {
+        todayTasks.push(task);
+      } else if (taskDate > currentDate) {
+        upcomingTasks.push(task);
+      } else {
+        dueTasks.push(task);
+      }
     }
   });
 
