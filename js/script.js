@@ -1,7 +1,15 @@
-let searchTerm=""
+let searchTerm = ""
 document.getElementById("searchInput").addEventListener("input", function (e) {
   searchTerm = e.target.value.toLowerCase(); // Update search term with lowercase input
   displayTasks(); // Call displayTasks to re-render filtered tasks
+});
+document.getElementById("okButton").addEventListener("click", function () {
+  document.getElementById("modal").classList.add("hidden");
+});
+
+// Close modal on cross icon click
+document.getElementById("closeModal").addEventListener("click", function () {
+  document.getElementById("modal").classList.add("hidden");
 });
 
 
@@ -34,7 +42,8 @@ document.getElementById("taskForm").addEventListener("submit", function (e) {
     this.reset();
     displayTasks();
   } else {
-    alert("Please fill all fields");
+    document.getElementById("modal").classList.remove("hidden");
+    return;
   }
 });
 
