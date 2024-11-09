@@ -12,6 +12,7 @@ document.getElementById("taskForm").addEventListener("submit", function (e) {
     const formattedDate = formatDate(taskDate);
 
     const task = {
+      id: crypto.randomUUID(),
       name: taskName,
       date: formattedDate,
       time: formattedTime,
@@ -30,14 +31,24 @@ document.getElementById("taskForm").addEventListener("submit", function (e) {
   }
 });
 
+let editingTask = null
 // Function to format time to 12-hour format
 function formatTime(time) {
-  const [hours, minutes] = time.split(":");
-  let date = new Date(0, 0, 0, hours, minutes);
-  const hours12 = (date.getHours() % 12 || 12).toString().padStart(2, "0");
-  const am_pm = date.getHours() >= 12 ? "am" : "pm";
-  const formattedMinutes = String(date.getMinutes()).padStart(2, "0");
-  return `${hours12}:${formattedMinutes} ${am_pm}`;
+  const [hours, minutes] = time.split(":");  // Split the time into hours and minutes
+  let hour = parseInt(hours, 10);
+  let period = "AM";
+
+  if (hour >= 12) {
+    period = "PM";
+    if (hour > 12) hour -= 12;  // Convert 24-hour time to 12-hour time
+  } else if (hour === 0) {
+    hour = 12;  // Midnight case (00:00) should be 12:00 AM
+  }
+
+  const hours12 = hour.toString().padStart(2, "0");  // Ensure two-digit format
+  const formattedMinutes = minutes.padStart(2, "0");  // Ensure two-digit format for minutes
+
+  return `${hours12}:${formattedMinutes} ${period}`;  // Return formatted time
 }
 
 // Function to format date into readable format
@@ -77,11 +88,11 @@ function displayTasks() {
   taskList.innerHTML = ""; // Clear current tasks
 
 
-    // Display Due tasks
-    if (dueTasks.length > 0) {
-      const dueSection = createTaskSection("Due Tasks", dueTasks);
-      taskList.appendChild(dueSection);
-    }
+  // Display Due tasks
+  if (dueTasks.length > 0) {
+    const dueSection = createTaskSection("Due Tasks", dueTasks);
+    taskList.appendChild(dueSection);
+  }
   // Display Today tasks
   if (todayTasks.length > 0) {
     const todaySection = createTaskSection("Today", todayTasks, true); // Pass true to indicate no date for today
@@ -93,6 +104,21 @@ function displayTasks() {
     const upcomingSection = createTaskSection("Upcoming", upcomingTasks);
     taskList.appendChild(upcomingSection);
   }
+
+  if (editingTask && tasks.some(task => task.id === editingTask)) {
+      const editDiv = document.createElement('div');
+      const taskToEdit = tasks.find(task => task.id === editingTask);
+      editDiv.innerHTML = `
+        <div class="p-4 mt-4 bg-gray-100 rounded-md shadow-sm">
+          <h3 class="text-xl font-bold">Edit Task</h3>
+          <input type="text" id="editTaskInput" value="${taskToEdit.name}" class="border p-2 rounded-md w-full mb-2"/>
+          <button onclick="saveTask('${taskToEdit.id}')" class="bg-green-500 py-1 px-3 rounded-md">Save</button>
+          <button onclick="cancelEdit()" class="ml-2 bg-gray-500 py-1 px-3 rounded-md">Cancel</button>
+        </div>
+      `;
+      taskList.appendChild(editDiv);
+    }
+  
 
 
 }
@@ -108,26 +134,38 @@ function createTaskSection(title, tasks, isToday = false) {
   section.appendChild(sectionHeader);
 
   const taskItemsContainer = document.createElement("div");
-  taskItemsContainer.className = "flex flex-col";  // Use flex-col for vertical alignment
+  taskItemsContainer.className = "flex flex-col";
+  // Use flex-col for vertical alignment
 
-  tasks.forEach((task) => {
+  tasks.forEach((task, index) => {
     const taskItem = document.createElement("div");
     taskItem.className = "p-4 mb-4 rounded-md bg-gray-50 shadow-sm";  // Add shadow for visual separation
-
     taskItem.innerHTML = `
-      <div class="flex flex-col mb-2">
-        ${!isToday ? `<div class="text-lg text-black font-semibold  ">${task.date}</div>` : ''}
-        <div class="items-center">
-          <div class="text-sm  mt-2 ">${task.name} at<span class="text-sm font-bold text-black"> ${task.time}</span></div>
+    <div class="flex flex-col mb-2">
+      ${!isToday ? `<div class="text-lg text-black font-semibold  ">${task.date}</div>` : ''}
+      <div class="items-center flex justify-between">
+        <div class="text-sm mt-2">${task.name} at<span class="text-sm font-bold text-black"> ${task.time}</span></div>
+  
+        <div class="flex">
+          <button onclick="showEditTask('${task.id}')" class="bg-yellow-500 py-1 px-3 rounded-md">Edit</button>
+          <button class="ml-2 bg-red-500 py-1 px-2 rounded-md">Delete</button>
         </div>
       </div>
-    `;
+    </div>
+  `;
 
     taskItemsContainer.appendChild(taskItem);
+    console.log("edit task,:", typeof editingTask, "taskId:", typeof task.id)
+
   });
 
   section.appendChild(taskItemsContainer);
   return section;
+}
+function showEditTask(taskId) {
+  console.log("tasKid in function:", typeof taskId)
+  editingTask = String(taskId);
+  displayTasks(); // Rerender tasks with edit field for the selected task
 }
 
 // Display tasks on page load
